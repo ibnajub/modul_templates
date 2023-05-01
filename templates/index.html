@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{#    <div style="padding: 20px; background-color: fuchsia"> Extended template index!</div>#}
+{#    <a href="{% url 'articles' %}">To the first page</a>#}
+
+    <div>
+    <a href="{% url 'logout' %}" >LogOut</a>
+    </div>
+
+    <br>
+    <br>
+{#    <a style="background-color: coral" href="{% url 'article_id' rand_list_article|random %} ">random INT article</a>#}
+{#    <br>#}
+{#    <br>#}
+{#    <a style="background-color: chocolate"#}
+{#       href="{% url 'article_slug' rand_list_article|random rand_article_slag %} ">random INT SLUG article</a>#}
+{#    <br>#}
+{#    <img src="{% static 'img/regexp.png' %}" alt="regexp">#}
+{% endblock %}
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>Title</title>#}
+{#</head>#}
+{#<body>#}
+{#<div>#}
+{#    <a href="{% url 'index' %}">Another page</a>#}
+{#</div>#}
+{#</body>#}
+{#</html>#}

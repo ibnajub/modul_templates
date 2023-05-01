@@ -1,24 +1,42 @@
-import string
-from random import random
+# import string
+# from random import random
 
 from django.shortcuts import render
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, LogoutView
+from django.views.generic import ListView, CreateView
 
-def index(request):
-    # my_num = 33
-    # my_str = 'some string'
-    # my_dict = {"some_key": "some_value"}
-    # my_set = {'set_first_item', 'set_second_item', 'set_third_item'}
-    # my_tuple = ('tuple_first_item', 'tuple_second_item', 'tuple_third_item')
-    # my_class = MyClass('class string')
-    # rand_list_article = [1, 2, 3, 4, 5]
-    # # rand_list_article = 2
-    # letters = string.ascii_letters
-    # rand_article_slag = ''.join(random.choice(letters) for i in range(5)) + '-' \
-    #                     + ''.join(random.choice(letters) for i in range(5))
-    return render(request, 'index_demar v2.htm', {
-        # 'rand_list_article': rand_list_article,
-        # 'rand_list_article': rand_list_article,
-        # 'rand_article_slag': rand_article_slag,
-        
-    })
+from myapp.models import Product
+
+
+# class Index(View):
+#     http_method_names = ['get', ]
+#
+#     def get(self, request, *args, **kwargs):
+#         return render(request, 'index.html')
+
+class IndexProduct(LoginRequiredMixin, ListView):
+    model = Product
+    template_name = 'index.html'
+    login_url = 'login/'
+
+
+class Register(CreateView):
+    form_class = UserCreationForm
+    template_name = 'register.html'
+    success_url = '/'
+    
+class Login(LoginView):
+    # https://ccbv.co.uk/projects/Django/4.1/django.contrib.auth.views/LoginView/
+    success_url = '/'
+    template_name = 'login.html'
+    def get_success_url(self):
+        return self.success_url
+class LogOut(LoginRequiredMixin, LogoutView):
+    next_page = '/'
+    login_url = 'login/'
+    
+    
+    

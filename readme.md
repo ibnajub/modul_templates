@@ -7,6 +7,10 @@ pip freeze > requirements.txt
 pip install -r requirements.txt
 python manage.py createsuperuser
 
+from myapp.models import *
+
+exist() --- 
+
 пример сайта для уроков
 https://edu-python-course.github.io/blog-bootstrap/templates/blogpost.html
 https://edu-python-course.github.io/_build/html/uk/appx/blog.html#challenge-templates

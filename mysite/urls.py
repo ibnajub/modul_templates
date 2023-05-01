@@ -17,9 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from myapp.views import index
+from myapp.views import IndexProduct, Login, Register, LogOut
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', index, name='index'),
+    path('', IndexProduct.as_view(), name='index'),
+    path('login/', Login.as_view(), name='login'),
+    path('register/', Register.as_view(), name='register'),
+    path('logout/', LogOut.as_view(), name='logout'),
+
 ]
