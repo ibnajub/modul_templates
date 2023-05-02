@@ -6,7 +6,7 @@ from myapp.models import Product, Buy, ReturnСonfirmation
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['title', 'content', 'price,quantity']
+        fields = ['title', 'content', 'price','quantity']
     
     def __init__(self, *args, **kwargs):
         disabled_fields = kwargs.get('disabled_fields')

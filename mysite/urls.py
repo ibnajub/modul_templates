@@ -24,6 +24,7 @@ urlpatterns = [
     path('', IndexProduct.as_view(), name='index'),
     path('login/', Login.as_view(), name='login'),
     path('register/', Register.as_view(), name='register'),
+    # path('register/', register, name='register'),
     path('logout/', LogOut.as_view(), name='logout'),
 
 ]
