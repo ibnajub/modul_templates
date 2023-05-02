@@ -1,4 +1,4 @@
-from datetime import timezone
+from django.utils import timezone
 
 from django.db import models
 # from django.contrib.auth.models import User
@@ -39,11 +39,12 @@ class Buy(models.Model):
     siteUser = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='buy_users')
     quantity = models.IntegerField()
     summ = models.IntegerField()
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(default=timezone.now)
     
-    def save(self, **kwargs):
-        self.created_at = timezone.now()
-        super().save(**kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.pk:
+    #         self.created_at = timezone.now()
+    #     return super().save(*args, **kwargs)
     
     def __str__(self):
         return "product: {}; siteUser: {}; quantity:{}".format(self.product, self.siteUser, self.quantity)
@@ -52,11 +53,11 @@ class Buy(models.Model):
 class ReturnСonfirmation(models.Model):
     buy = models.OneToOneField(Buy, on_delete=models.CASCADE, null=False, related_name='buy_returns')
     siteUser = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='return_users')
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(default=timezone.now)
     
-    def save(self, **kwargs):
-        self.created_at = timezone.now()
-        super().save(**kwargs)
+    # def save(self, **kwargs):
+    #     self.created_at = timezone.now()
+    #     super().save(**kwargs)
     
     def __str__(self):
         return "buy: {}; created_at:{}".format(self.buy, self.created_at)
