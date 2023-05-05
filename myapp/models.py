@@ -13,9 +13,9 @@ from django.utils.text import slugify
 class SiteUser(AbstractUser):
     money = models.IntegerField()
     
-    def save(self, **kwargs):
-        self.money = 10000
-        super().save(**kwargs)
+    # def save(self, **kwargs):
+    #     self.money = 10000
+    #     super().save(**kwargs)
 
 
 class Product(models.Model):
@@ -50,7 +50,7 @@ class Buy(models.Model):
         return "product: {}; siteUser: {}; quantity:{}".format(self.product, self.siteUser, self.quantity)
 
 
-class ReturnСonfirmation(models.Model):
+class ReturnConfirmation(models.Model):
     buy = models.OneToOneField(Buy, on_delete=models.CASCADE, null=False, related_name='buy_returns')
     siteUser = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='return_users')
     created_at = models.DateTimeField(default=timezone.now)

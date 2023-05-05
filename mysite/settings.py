@@ -127,7 +127,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "templates/index_demar v2_files",
+    BASE_DIR / "static/",
 ]
 
 MEDIA_URL = 'media/'
@@ -136,3 +136,5 @@ MEDIA_ROOT = BASE_DIR / 'media/'
 AUTH_USER_MODEL = 'myapp.SiteUser'
 
 # LOGIN_REDIRECT_URL = '/index'
+
+USER_MONEY = 10000

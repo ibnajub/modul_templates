@@ -1,33 +1,97 @@
 {% extends 'base.html' %}
-{% load static %}
+
 {% block content %}
-{#    <div style="padding: 20px; background-color: fuchsia"> Extended template index!</div>#}
-{#    <a href="{% url 'articles' %}">To the first page</a>#}
+    {#    <div style="padding: 20px; background-color: fuchsia"> Extended template index!</div>#}
+    {#    <a href="{% url 'articles' %}">To the first page</a>#}
 
-    <div>
-    <a href="{% url 'logout' %}" >LogOut</a>
-    </div>
 
-    <br>
-    <br>
-{#    <a style="background-color: coral" href="{% url 'article_id' rand_list_article|random %} ">random INT article</a>#}
-{#    <br>#}
-{#    <br>#}
-{#    <a style="background-color: chocolate"#}
-{#       href="{% url 'article_slug' rand_list_article|random rand_article_slag %} ">random INT SLUG article</a>#}
-{#    <br>#}
-{#    <img src="{% static 'img/regexp.png' %}" alt="regexp">#}
+    {#    {% load static %}#}
+
+
+
+
+
+    <!-- Page Content -->
+    <div class="container my-3">
+        {#        <div class="row">#}
+        {#            <div class="col-12">#}
+        {#                <h2>Products:</h2>#}
+        {#            </div>#}
+        {#        </div>#}
+        <div class="row">
+
+            {% for obj in page_obj %}
+
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow rounded">
+                        {% if obj.img_url %}
+                            {#                        <img src="{% static 'img/'%}{{obj.img_url}}" class="card-img-top" alt="{{ obj.img_url }}">#}
+                            <img src="{{ obj.img_url.url }}" class="card-img-top" alt="{{ obj.title }}">
+                        {% endif %}
+
+                        <div class="card-body">
+                            <p class="card-text">{{ obj.title }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Buy</button>
+                                </div>
+                                <div class="btn-group">
+                                    <a href="{% url 'update_product' %}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                </div>
+                                <small class="text-muted">{{ obj.quantity }} шт</small>
+                                <small class="text-muted">{{ obj.price }} грн</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+
+        </div>
+
+{#-----------pagination#}
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1">&laquo; first</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">&laquo; first</span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">previous</span>
+      </li>
+    {% endif %}
+
+    <li class="page-item active">
+      <span class="page-link">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">next</span>
+      </li>
+      <li class="page-item disabled">
+        <span class="page-link">last &raquo;</span>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+
 {% endblock %}
-
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title>Title</title>#}
-{#</head>#}
-{#<body>#}
-{#<div>#}
-{#    <a href="{% url 'index' %}">Another page</a>#}
-{#</div>#}
-{#</body>#}
-{#</html>#}
