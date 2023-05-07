@@ -9,7 +9,7 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['title', 'content', 'price', 'quantity']
-    
+
     def __init__(self, *args, **kwargs):
         disabled_fields = kwargs.get('disabled_fields')
         if disabled_fields is not None:
@@ -23,8 +23,8 @@ class ProductForm(forms.ModelForm):
 class BuyForm(forms.ModelForm):
     class Meta:
         model = Buy
-        fields = ['product', 'siteUser', 'quantity','summ', 'created_at']
-    
+        fields = ['product', 'site_user', 'quantity','summ', 'created_at']
+
     def __init__(self, *args, **kwargs):
         disabled_fields = kwargs.get('disabled_fields')
         if disabled_fields is not None:
@@ -38,8 +38,8 @@ class BuyForm(forms.ModelForm):
 class ReturnConfirmationForm(forms.ModelForm):
     class Meta:
         model = ReturnConfirmation
-        fields = ['buy', 'siteUser', 'created_at']
-    
+        fields = ['buy', 'site_user', 'created_at']
+
     def __init__(self, *args, **kwargs):
         disabled_fields = kwargs.get('disabled_fields')
         if disabled_fields is not None:
@@ -48,7 +48,7 @@ class ReturnConfirmationForm(forms.ModelForm):
         if disabled_fields:
             for field in self.fields:
                 self.fields[field].disabled = True
-        
+
 
 
 class MyRegisterForm(forms.ModelForm):

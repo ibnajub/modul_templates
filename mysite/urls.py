@@ -18,13 +18,15 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path
 
-from myapp.views import IndexProduct, Login, LogOut, UserRegisterView, BuyList, ReturnConfirmationList, AddProduct, ProductUpdate
+from myapp.views import IndexProduct, Login, LogOut, UserRegisterView, BuyList, ReturnConfirmationList, AddProduct, \
+    ProductUpdate, SearchProdictResults
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', IndexProduct.as_view(), name='index'),
     path('addproduct/', AddProduct.as_view(), name='addproduct'),
+    path('search_prodict_results/', SearchProdictResults.as_view(), name='search_prodict_results'),
     path('update_product/', ProductUpdate.as_view(), name='update_product'),
     path('buylist/', BuyList.as_view(), name='buylist'),
     path('returnconfirmationlist', ReturnConfirmationList.as_view(), name='returnconfirmationlist'),
@@ -33,7 +35,7 @@ urlpatterns = [
     # path('register/', register, name='register'),
     path('logout/', LogOut.as_view(), name='logout'),
     # static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
-    
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
