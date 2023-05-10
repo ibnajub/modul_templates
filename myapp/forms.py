@@ -23,16 +23,16 @@ class ProductForm(forms.ModelForm):
 class BuyForm(forms.ModelForm):
     class Meta:
         model = Buy
-        fields = ['product', 'site_user', 'quantity','summ', 'created_at']
+        fields = ['quantity',]
 
-    def __init__(self, *args, **kwargs):
-        disabled_fields = kwargs.get('disabled_fields')
-        if disabled_fields is not None:
-            del kwargs['disabled_fields']
-        super().__init__(*args, **kwargs)
-        if disabled_fields:
-            for field in self.fields:
-                self.fields[field].disabled = True
+    # def __init__(self, *args, **kwargs):
+    #     disabled_fields = kwargs.get('disabled_fields')
+    #     if disabled_fields is not None:
+    #         del kwargs['disabled_fields']
+    #     super().__init__(*args, **kwargs)
+    #     if disabled_fields:
+    #         for field in self.fields:
+    #             self.fields[field].disabled = True
 
 
 class ReturnConfirmationForm(forms.ModelForm):

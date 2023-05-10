@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.utils import timezone
 
 from django.db import models
@@ -11,7 +12,7 @@ from django.utils.text import slugify
 
 
 class SiteUser(AbstractUser):
-    money = models.IntegerField()
+    money = models.PositiveIntegerField()
     
     # def save(self, **kwargs):
     #     self.money = 10000
@@ -23,7 +24,7 @@ class Product(models.Model):
     content = models.TextField(max_length=10000, null=True)
     img_url = models.ImageField()
     price = models.IntegerField()
-    quantity = models.IntegerField()
+    quantity = models.PositiveIntegerField()
     slug = models.SlugField(max_length=50, null=True, unique=True, db_index=True)
     
     def save(self, **kwargs):
@@ -37,8 +38,8 @@ class Product(models.Model):
 class Buy(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, related_name='products')
     site_user = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='buy_users')
-    quantity = models.IntegerField()
-    summ = models.IntegerField()
+    quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    summ = models.PositiveIntegerField()
     created_at = models.DateTimeField(default=timezone.now)
 
     # def save(self, *args, **kwargs):

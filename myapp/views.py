@@ -1,27 +1,21 @@
 # import string
 # from random import random
+from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.db import transaction
 # from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 # from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 
-from myapp.forms import MyRegisterForm
+from myapp.forms import MyRegisterForm, BuyForm
 from myapp.models import Product, SiteUser, Buy, ReturnConfirmation
 
-
-# class Index(View):
-#     http_method_names = ['get', ]
-#
-#     def get(self, request, *args, **kwargs):
-#         return render(request, 'index.html')
-
-# class IndexProduct(LoginRequiredMixin, ListView):
 
 class BuyList(LoginRequiredMixin, ListView):
     login_url = 'login/'
@@ -65,8 +59,12 @@ class IndexProduct(ListView):
     allow_empty = True  # разрешить ли отображение пустого списка
     # ordering = None  # явно указать ордеринг
 
-    def post(self):
-        pass
+    # def post(self):
+    
+    
+    def get(self, request, *args, **kwargs):
+        
+        return  super().get(request)
 
 class SearchProdictResults(ListView):
     model = Product
@@ -93,16 +91,108 @@ class AddProduct(LoginRequiredMixin, CreateView):
     #     pass
 
 class ProductUpdate(LoginRequiredMixin, UpdateView):
-    login_url = 'login/'
     model = Product
+    login_url = 'login/'
     # form_class = MyModelForm
-    queryset = Product.objects.filter(pk= 1)
     template_name = 'update_product.html'
     success_url = reverse_lazy('index')
+    fields = ['title', 'content','img_url', 'price', 'quantity',]
+    # def form_valid(self, form):
+    #     # Вызываем родительский метод form_valid() для сохранения изменений в базе данных
+    #     response = super().form_valid(form)
+    #     # Добавляем дополнительную логику обработки после сохранения изменений, если это необходимо
+    #     return response
+class ProductDetail(LoginRequiredMixin, DetailView):
+    model = Product
+    login_url = 'login/'
+    template_name = 'product_detail.html'
+    extra_context = {'byform': BuyForm(),}
+    # success_url = reverse_lazy('buylist')
+    # fields = ['title', 'content','img_url', 'price', 'quantity',]
+
+
+    
+    def post(self, request, *args, **kwargs):
+        #     return buy_product(self,request)
+        # def buy_product(self,request):
+        
+        # self.object = self.get_object()
+        # context = self.get_context_data(object=self.object)
+        # return self.render_to_response(context)
+        id_product = int(request.POST.get('id'))
+        quantity = int(request.POST.get('quantity'))
+        
+        with transaction.atomic():
+            # obj_product_blocked =  get_object_or_404( Product.objects.select_for_update().get(id =  id_product))
+            # select_for_update блокирует запись в таблице в транзакции
+            obj_product_blocked =   Product.objects.select_for_update().get(id =  id_product)
+            
+            # блокировка уже существующего обьекта в транзакции
+            #  для юзера нельзя применять только для обычных моделей
+            # user_blocked = request.user.refresh_from_db(for_update=True)
+            
+            user_blocked = SiteUser.objects.select_for_update().get(id=request.user.id)
+            
+            summ = obj_product_blocked.price * quantity
+            error = False
+            if not obj_product_blocked:
+                messages.ERROR(self.request, "Product not found!")
+                error = True
+            if quantity >= obj_product_blocked.quantity or quantity < 1:
+                messages.ERROR(self.request, "Wrong quantity or product out of stock!")
+                error = True
+            if summ > user_blocked.money:
+                messages.ERROR(self.request, "Out of user money!")
+                error = True
+            if error:
+                return redirect('')
+            buy_obj = Buy(product = obj_product_blocked, site_user = user_blocked, quantity = quantity,
+                          summ = summ)
+            buy_obj.save()
+            
+            user_blocked.money -= summ
+            user_blocked.save()
+            
+            obj_product_blocked.quantity -= quantity
+            obj_product_blocked.save()
+            
+            # messages.success(self.request, "Количество должно быть больше нуля!")
+            messages.success(self.request, "Baying SUCSESS!")
+            return redirect('buylist')
+        
+        return redirect('')
+        
+        # return reverse_lazy('buylist')
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['byform'] = BuyForm(initial={'product': self.object.id})
+    #     # context['model2_objects'] = MyModel2.objects.all()
+    #     return context
 
 
 
 
+
+
+# class BuyProduct(LoginRequiredMixin, CreateView):
+#     model = Buy
+#     login_url = 'login/'
+#     fields = ['quantity','product',  ]
+#     success_url = reverse_lazy('buylist')
+#     form_class = BuyForm
+#
+#     def form_valid(self, form):
+#         buy = form.save(commit=False)
+#         buy.summ = buy.price * buy.quantity
+#         buy.save()
+#         messages.success(self.request, "Продукт был успешно добавлен в вашу корзину.")
+#         return super().form_valid(form)
+#     def get(self, request, *args, **kwargs):
+#         messages.add_message(request, messages.INFO, 'Hello world.')
+#
+#         # form = self.form_class()
+#         # return render(request, 'my_buy_form.html', {'form': form})
+#         return reverse_lazy('buylist')
 
 
 

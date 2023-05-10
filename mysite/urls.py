@@ -19,7 +19,8 @@ from django.contrib import admin
 from django.urls import path
 
 from myapp.views import IndexProduct, Login, LogOut, UserRegisterView, BuyList, ReturnConfirmationList, AddProduct, \
-    ProductUpdate, SearchProdictResults
+    ProductUpdate, SearchProdictResults, ProductDetail\
+    # , BuyProduct
 from django.conf.urls.static import static
 
 urlpatterns = [
@@ -27,7 +28,9 @@ urlpatterns = [
     path('', IndexProduct.as_view(), name='index'),
     path('addproduct/', AddProduct.as_view(), name='addproduct'),
     path('search_prodict_results/', SearchProdictResults.as_view(), name='search_prodict_results'),
-    path('update_product/', ProductUpdate.as_view(), name='update_product'),
+    path('update_product/<slug:slug>/', ProductUpdate.as_view(), name='update_product'),
+    path('product_detail/<slug:slug>/', ProductDetail.as_view(), name='product_detail'),
+    # path('buy_product/', BuyProduct.as_view(), name='buy_product'),
     path('buylist/', BuyList.as_view(), name='buylist'),
     path('returnconfirmationlist', ReturnConfirmationList.as_view(), name='returnconfirmationlist'),
     path('login/', Login.as_view(), name='login'),

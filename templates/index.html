@@ -25,23 +25,28 @@
                 <div class="col-md-4">
                     <div class="card mb-4 shadow rounded">
                         {% if obj.img_url %}
-                            {#                        <img src="{% static 'img/'%}{{obj.img_url}}" class="card-img-top" alt="{{ obj.img_url }}">#}
+                            <a href="{% url 'product_detail' slug=obj.slug %}">
                             <img src="{{ obj.img_url.url }}" class="card-img-top" alt="{{ obj.title }}">
+                            </a>
                         {% endif %}
 
                         <div class="card-body">
                             <p class="card-text">{{ obj.title }}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Buy</button>
+                                    <a href="{% url 'product_detail' slug=obj.slug %}">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">Detail</button>
+                                    </a>
                                 </div>
+
+                                <small class="text-muted">{{ obj.quantity }} шт</small>
+                                <small class="text-muted">{{ obj.price }} грн</small>
+
                                 <div class="btn-group">
-                                    <a href="{% url 'update_product' %}">
+                                    <a href="{% url 'update_product' slug=obj.slug %}">
                                         <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
                                     </a>
                                 </div>
-                                <small class="text-muted">{{ obj.quantity }} шт</small>
-                                <small class="text-muted">{{ obj.price }} грн</small>
                             </div>
                         </div>
                     </div>
@@ -53,47 +58,47 @@
         </div>
     </div>
 
-{#-----------pagination#}
-<nav aria-label="Page navigation example">
-  <ul class="pagination justify-content-center">
-    {% if page_obj.has_previous %}
-      <li class="page-item">
-        <a class="page-link" href="?page=1">&laquo; first</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
-      </li>
-    {% else %}
-      <li class="page-item disabled">
-        <span class="page-link">&laquo; first</span>
-      </li>
-      <li class="page-item disabled">
-        <span class="page-link">previous</span>
-      </li>
-    {% endif %}
+    {#-----------pagination#}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; first</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; first</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">previous</span>
+                </li>
+            {% endif %}
 
-    <li class="page-item active">
+            <li class="page-item active">
       <span class="page-link">
         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
       </span>
-    </li>
+            </li>
 
-    {% if page_obj.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-      </li>
-    {% else %}
-      <li class="page-item disabled">
-        <span class="page-link">next</span>
-      </li>
-      <li class="page-item disabled">
-        <span class="page-link">last &raquo;</span>
-      </li>
-    {% endif %}
-  </ul>
-</nav>
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">next</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">last &raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
 
 {% endblock %}
