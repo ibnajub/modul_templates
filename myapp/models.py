@@ -36,7 +36,7 @@ class Product(models.Model):
 
 
 class Buy(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, related_name='products')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, related_name='buy_product')
     site_user = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='buy_users')
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     summ = models.PositiveIntegerField()
@@ -52,7 +52,7 @@ class Buy(models.Model):
 
 
 class ReturnConfirmation(models.Model):
-    buy = models.OneToOneField(Buy, on_delete=models.CASCADE, null=False, related_name='buy_returns')
+    buy = models.OneToOneField(Buy, on_delete=models.CASCADE, null=False, related_name='returns_buys')
     site_user = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='return_users')
     created_at = models.DateTimeField(default=timezone.now)
 

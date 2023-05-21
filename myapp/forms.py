@@ -69,7 +69,7 @@ class MyRegisterForm(forms.ModelForm):
 
     class Meta:
         model = SiteUser
-        fields = ['username', 'password1', 'password2', 'money']
+        fields = ['username', 'password1', 'password2']
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")

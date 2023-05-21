@@ -43,7 +43,8 @@
                     <a class="nav-item nav-link" href="#">Contact Us</a>
                 </div>
                 {#----------------            search#}
-                <form action="{% url 'search_prodict_results' %}" method="get" class="form-inline my-2 my-lg-0 mr-2">
+{#                <form action="{% url 'search_prodict_results' %}" method="get" class="form-inline my-2 my-lg-0 mr-2">#}
+                <form action="{% url 'index' %}" method="get" class="form-inline my-2 my-lg-0 mr-2">
                     {% csrf_token %}
                     <input name="query_search" class="form-control mr-sm-2"
                            type="search" placeholder="Search" aria-label="Search">

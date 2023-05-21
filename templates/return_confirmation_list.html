@@ -1,39 +1,48 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    {#    <div style="padding: 20px; background-color: fuchsia"> Extended template index!</div>#}
-    {#    <a href="{% url 'articles' %}">To the first page</a>#}
-
-
-    {#    {% load static %}#}
-
-
-
-
 
     <!-- Page Content -->
-    <div class="container my-3">
-        {#        <div class="row">#}
-        {#            <div class="col-12">#}
-        {#                <h2>Products:</h2>#}
-        {#            </div>#}
-        {#        </div>#}
-        <div class="row">
+    <table class="table">
 
-            {% for obj in page_obj %}
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Return Created at</th>
+            <th>Product</th>
+            <th>quantity</th>
+            <th>summ</th>
+            <th>bay created_at</th>
+            <th>User</th>
+            {#      <th>...</th>#}
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in page_obj %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ obj.created_at }}</td>
+                <td>{{ obj.buy.product }}</td>
+                <td>{{ obj.buy.quantity }}</td>
+                <td>{{ obj.buy.summ }}</td>
+                <td>{{ obj.buy.created_at }}</td>
+                <td>{{ obj.site_user }}</td>
 
-                <div class="col-md-4">
-                    <p class="card-text">{{ obj }}</p>
-{#                    <p class="card-text">{{ obj.siteUser }}</p>#}
-{#                    <p class="card-text">{{ obj.quantity }}</p>#}
-{#                    <p class="card-text">{{ obj.quantity }}</p>#}
-                </div>
-
-            {% endfor %}
-
-
-        </div>
-    </div>
+                <td>
+                    {% if request.user.is_superuser %}
+                        <form action="{% url 'returnconfirmationlist' %}" method="post">
+                        {% csrf_token %}
+                        <input type="number" hidden name="return_id" value="{{ obj.id }}">
+                        <button type="submit" name="submit_btn" value="Accept">Accept</button>
+                        <button type="submit" name="submit_btn" value="Cancel">Cancel</button>
+                        {#                        <button type="submit" name="Cancel" value="{{ obj.id }}">Cancel</button>#}
+                    {% endif %}
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
     {#-----------pagination#}
     <nav aria-label="Page navigation example">
