@@ -7,6 +7,8 @@ def delete(self, request, *args, **kwargs):
 хотелось бы удаление объекта делать вмсете в with transaction.atomic():
 с остальными действиями так и не понял как это сделать
 
+3 timezone.now()  время utc на 3 часа меньше
+
 python -m venv /path/to/new/virtual/environment
 pip install django
 django-admin startproject mysite

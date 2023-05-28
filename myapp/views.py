@@ -345,6 +345,10 @@ class ReturnConfirmationView(LoginRequiredMixin, CreateView):
                 messages.error(self.request, "ReturnConfirmation already exist!")
                 return redirect('returnconfirmationlist')
             return_confirmation_obj.buy = Buy.objects.get(id=buy_id)
+            if timezone.now() > (
+                    return_confirmation_obj.buy.created_at + timezone.timedelta(minutes=TIME_RETURN_LIMIT)):
+                messages.error(self.request, "Return not allowed error, 3 minutes have passed!")
+                return redirect('buylist')
             return_confirmation_obj.site_user = SiteUser.objects.get(id=self.request.user.id)
             return_confirmation_obj.save()
             messages.success(self.request, "ReturnConfirmation saved SUCSESS!")
