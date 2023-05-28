@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- Page Content -->
+    <table class="table">
+
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Return Created at</th>
+            <th>Product</th>
+            <th>quantity</th>
+            <th>summ</th>
+            <th>bay created_at</th>
+            <th>User</th>
+            {#      <th>...</th>#}
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in page_obj %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ obj.created_at }}</td>
+                <td>{{ obj.buy.product }}</td>
+                <td>{{ obj.buy.quantity }}</td>
+                <td>{{ obj.buy.summ }}</td>
+                <td>{{ obj.buy.created_at }}</td>
+                <td>{{ obj.site_user }}</td>
+
+                {% if request.user.is_superuser %}
+                    <td>
+                        <form action="{% url 'return_confirmation_accept' pk=obj.id %}" method="post">
+                            {% csrf_token %}
+                            {#                            <input type="number" hidden name="pk" value="{{ obj.id }}">#}
+                            <button type="submit" name="submit_btn" value="Accept">Accept</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'return_confirmation_cancel' obj.id %}" method="post">
+                            {% csrf_token %}
+                            {#                            <input type="number" hidden name="pk" value="{{ obj.id }}">#}
+                            <button type="submit" name="submit_btn" value="Cancel111">Cancel</button>
+                        </form>
+                        {#                        <button type="submit" name="Cancel" value="{{ obj.id }}">Cancel</button>#}
+                    </td>
+                {% endif %}
+
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {#-----------pagination#}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; first</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; first</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">previous</span>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+      <span class="page-link">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+      </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">next</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">last &raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+{% endblock %}

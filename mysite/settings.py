@@ -18,6 +18,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
+# ------------------------------------------------------------------------------------
+# Один из распространенных подходов - использование переменных окружения. Вместо хранения секретного ключа напрямую в
+# файле settings.py, вы можете установить его как переменную окружения на вашем сервере или локальной машине разработки.
+# Затем, в файле settings.py, вы можете получить значение секретного ключа из переменной окружения.
+# import os
+#
+# SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+# ------------------------------------------------------------------------------------
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-)a(d0rc6zagog^qk633mjicz!e)lb%s9#tgt7&g1gevnc)7$*0'
 
@@ -112,12 +121,21 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-
-]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static/",
+]
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media/'
+
+AUTH_USER_MODEL = 'myapp.SiteUser'
+
+# LOGIN_REDIRECT_URL = '/index'
+
+USER_MONEY = 10000
+TIME_RETURN_LIMIT = 3

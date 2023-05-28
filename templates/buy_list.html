@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <!-- Page Content -->
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Product</th>
+            <th>User</th>
+            <th>Quantity</th>
+            <th>Summ</th>
+            <th>Created at</th>
+            {#      <th>...</th>#}
+        </tr>
+        </thead>
+        <tbody>
+        {% for obj in page_obj %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ obj.product }}</td>
+                <td>{{ obj.site_user.username }}</td>
+                <td>{{ obj.quantity }}</td>
+                <td>{{ obj.summ }}</td>
+                <td>{{ obj.created_at }}</td>
+                <td>
+                    <form action="{% url 'returnconfirmation_create' %}" method="post">
+                        {% csrf_token %}
+                        <input type="number" hidden name="buy_id" value="{{ obj.id }}">
+                        <button type="submit">Return</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+    {# шаблон заготовка без стилей  #}
+    {#    {% for obj in page_obj %}#}
+    {##}
+    {#        <p>{{ forloop.counter }}</p>#}
+    {#        <p>{{ obj.product }}</p>#}
+    {#        <p>{{ obj.product }}</p>#}
+    {#        <p>{{ obj.siteUser }}</p>#}
+    {#        <p>{{ obj.qusummantity }}</p>#}
+    {#        <p>{{ obj.created_at }}</p>#}
+    {##}
+    {#        <form action="" method="post">#}
+    {#            {% csrf_token %}#}
+    {#            <input type="number" hidden name="buy_id" value="{{ obj.id }}">#}
+    {#            <button type="submit">Return</button>#}
+    {#        </form>#}
+    {#    {% endfor %}#}
+
+
+
+
+
+    {#    -----------pagination#}
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; first</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo; first</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">previous</span>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+          <span class="page-link">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">next</span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">last &raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+{% endblock %}
