@@ -1,3 +1,12 @@
+не решенные проблемы
+1 lass ReturnConfirmationCancelView не заходит в метод
+def delete(self, request, *args, **kwargs):
+чтоб показать сообщение об успехе после удаления
+
+2 class ReturnConfirmationAcceptView
+хотелось бы удаление объекта делать вмсете в with transaction.atomic():
+с остальными действиями так и не понял как это сделать
+
 python -m venv /path/to/new/virtual/environment
 pip install django
 django-admin startproject mysite
@@ -9,7 +18,7 @@ python manage.py createsuperuser
 
 from myapp.models import *
 
-exist() --- 
+exist() ---
 
 пример сайта для уроков
 https://edu-python-course.github.io/blog-bootstrap/templates/blogpost.html
@@ -71,9 +80,6 @@ https://docs.google.com/document/d/1F1imYp9GzJE4dVr8oyS1vZrG3CsRgxmiGbO249n5iMc/
 Если пользователь не залогинен, то он видит только список товаров, без каких либо кнопок.
 
 После регистрации пользователь должен автоматически получить определённое кол-во денег в кошелёк (например 10000)
-
-
-
 
 # ------------------------------------------------------------------------------------
 # Один из распространенных подходов - использование переменных окружения. Вместо хранения секретного ключа напрямую в
