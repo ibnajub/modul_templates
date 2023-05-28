@@ -28,17 +28,25 @@
                 <td>{{ obj.buy.created_at }}</td>
                 <td>{{ obj.site_user }}</td>
 
-                <td>
-                    {% if request.user.is_superuser %}
-                        <form action="{% url 'returnconfirmationlist' %}" method="post">
-                        {% csrf_token %}
-                        <input type="number" hidden name="return_id" value="{{ obj.id }}">
-                        <button type="submit" name="submit_btn" value="Accept">Accept</button>
-                        <button type="submit" name="submit_btn" value="Cancel">Cancel</button>
+                {% if request.user.is_superuser %}
+                    <td>
+                        <form action="{% url 'return_confirmation_accept' pk=obj.id %}" method="post">
+                            {% csrf_token %}
+                            {#                            <input type="number" hidden name="pk" value="{{ obj.id }}">#}
+                            <button type="submit" name="submit_btn" value="Accept">Accept</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form action="{% url 'return_confirmation_cancel' obj.id %}" method="post">
+                            {% csrf_token %}
+                            {#                            <input type="number" hidden name="pk" value="{{ obj.id }}">#}
+                            <button type="submit" name="submit_btn" value="Cancel111">Cancel</button>
+                        </form>
                         {#                        <button type="submit" name="Cancel" value="{{ obj.id }}">Cancel</button>#}
-                    {% endif %}
-                    </form>
-                </td>
+                    </td>
+                {% endif %}
+
+
             </tr>
         {% endfor %}
         </tbody>
