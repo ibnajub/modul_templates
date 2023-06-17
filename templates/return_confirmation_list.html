@@ -22,10 +22,10 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ obj.created_at }}</td>
-                <td>{{ obj.buy.product }}</td>
-                <td>{{ obj.buy.quantity }}</td>
-                <td>{{ obj.buy.summ }}</td>
-                <td>{{ obj.buy.created_at }}</td>
+                <td>{{ obj.purchase.product }}</td>
+                <td>{{ obj.purchase.quantity }}</td>
+                <td>{{ obj.purchase.summ }}</td>
+                <td>{{ obj.purchase.created_at }}</td>
                 <td>{{ obj.site_user }}</td>
 
                 {% if request.user.is_superuser %}

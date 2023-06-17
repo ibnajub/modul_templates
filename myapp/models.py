@@ -25,7 +25,8 @@ class Product(models.Model):
     img_url = models.ImageField()
     price = models.IntegerField()
     quantity = models.PositiveIntegerField()
-    slug = models.SlugField(max_length=50, null=True, unique=True, db_index=True)
+    # slug = models.SlugField(max_length=50, null=True, unique=True, db_index=True)
+    slug = models.SlugField(unique=True)
     
     def save(self, **kwargs):
         self.slug = slugify(self.title)
@@ -35,9 +36,9 @@ class Product(models.Model):
         return "Title: {}; quantity: {}; price:{}".format(self.title, self.quantity, self.price)
 
 
-class Buy(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, related_name='buy_product')
-    site_user = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='buy_users')
+class Purchase(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=False, related_name='product_purchases')
+    site_user = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='user_purchases')
     quantity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     summ = models.PositiveIntegerField()
     created_at = models.DateTimeField(default=timezone.now)
@@ -52,7 +53,7 @@ class Buy(models.Model):
 
 
 class ReturnConfirmation(models.Model):
-    buy = models.OneToOneField(Buy, on_delete=models.CASCADE, null=False, related_name='returns_buys')
+    purchase = models.OneToOneField(Purchase, on_delete=models.CASCADE, null=False, related_name='returns_purchases')
     site_user = models.ForeignKey(SiteUser, on_delete=models.CASCADE, null=False, related_name='return_users')
     created_at = models.DateTimeField(default=timezone.now)
 
@@ -61,7 +62,7 @@ class ReturnConfirmation(models.Model):
     #     super().save(**kwargs)
 
     def __str__(self):
-        return "buy: {}; created_at:{}".format(self.buy, self.created_at)
+        return "purchase: {}; created_at:{}".format(self.purchase, self.created_at)
 
     # если подтвержден возврат то удалить покупку, вернуть количество товару, удалить возрват
     # если отклонен возврат то удалить обьект возврата

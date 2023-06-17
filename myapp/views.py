@@ -10,12 +10,15 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy, reverse
-from django.utils import timezone
+
+# from django.utils import timezone
+from datetime import datetime
+
 # from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 
-from myapp.forms import MyRegisterForm, BuyForm, ProductForm
-from myapp.models import Product, SiteUser, Buy, ReturnConfirmation
+from myapp.forms import MyRegisterForm, PurchaseForm, ProductForm
+from myapp.models import Product, SiteUser, Purchase, ReturnConfirmation
 from mysite.settings import TIME_RETURN_LIMIT
 
 
@@ -24,12 +27,12 @@ class AdminPassedMixin(UserPassesTestMixin):
         return self.request.user.is_superuser
 
 
-class BuyListView(LoginRequiredMixin, ListView):
+class PurchaseListView(LoginRequiredMixin, ListView):
     login_url = 'login/'
     # ordering = ['-created_at']  # явно указать ордеринг
     paginate_by = 5
-    model = Buy
-    template_name = 'buy_list.html'
+    model = Purchase
+    template_name = 'purchase_list.html'
     
     # login_url = 'login/'
     # allow_empty = True  # разрешить ли отображение пустого списка
@@ -38,24 +41,23 @@ class BuyListView(LoginRequiredMixin, ListView):
         queryset = super().get_queryset()
         m_user = self.request.user
         
-        if m_user.is_authenticated:
-            if m_user.is_superuser:
-                queryset = queryset.order_by('-created_at')
-            else:
-                queryset = queryset.filter(site_user=self.request.user) \
-                    .order_by('-created_at')
+        if m_user.is_superuser:
+            queryset = queryset.order_by('-created_at')
+        elif m_user.is_authenticated:
+            queryset = queryset.filter(site_user=self.request.user) \
+                .order_by('-created_at')
         else:
             queryset = None
         return queryset
     
     # def post(self, request, *args, **kwargs):
     # # create ReturnConfirmation
-    # buy_id = int(request.POST.get('buy_id'))
+    # purchase_id = int(request.POST.get('purchase_id'))
     # with transaction.atomic():
     #     # obj_product_blocked =  get_object_or_404( Product.objects.select_for_update().get(id =  id_product))
     #     #     # select_for_update блокирует запись в таблице в транзакции
-    #     obj_buy_blocked = Buy.objects.select_for_update().get(id=buy_id)
-    #     return_confirmation_is = ReturnConfirmation.objects.filter(buy=obj_buy_blocked)
+    #     obj_purchase_blocked = Purchase.objects.select_for_update().get(id=purchase_id)
+    #     return_confirmation_is = ReturnConfirmation.objects.filter(purchase=obj_purchase_blocked)
     #     if return_confirmation_is.exists():
     #         messages.error(self.request, "ReturnConfirmation already exist!")
     #         return redirect('returnconfirmationlist')
@@ -65,16 +67,16 @@ class BuyListView(LoginRequiredMixin, ListView):
     #     # user_blocked = request.user.refresh_from_db(for_update=True)
     #     user_blocked = SiteUser.objects.select_for_update().get(id=request.user.id)
     #     #  вернуть можно только в первые три минуты
-    #     if timezone.now() > (obj_buy_blocked.created_at + timezone.timedelta(minutes=TIME_RETURN_LIMIT)):
+    #     if timezone.now() > (obj_purchase_blocked.created_at + timezone.timedelta(minutes=TIME_RETURN_LIMIT)):
     #         messages.error(self.request, "Return not allowed error, 3 minutes have passed!")
-    #         return redirect('buylist')
+    #         return redirect('purchaselist')
     #
-    #     return_confirmation_obj = ReturnConfirmation(buy=obj_buy_blocked, site_user=user_blocked)
+    #     return_confirmation_obj = ReturnConfirmation(purchase=obj_purchase_blocked, site_user=user_blocked)
     #     return_confirmation_obj.save()
     #     messages.success(self.request, "ReturnConfirmation saved SUCSESS!")
     #     return redirect('returnconfirmationlist')
     #
-    # return redirect('buylist')
+    # return redirect('purchaselist')
 
 
 class ReturnConfirmationListView(LoginRequiredMixin, ListView):
@@ -104,14 +106,14 @@ class ReturnConfirmationListView(LoginRequiredMixin, ListView):
     #     return_confirmation_obj = get_object_or_404(ReturnConfirmation, id=return_id)
     #     if submit_btn == 'Accept':
     #         with transaction.atomic():
-    #             obj_buy_blocked = Buy.objects.select_for_update().get(id=return_confirmation_obj.buy.id)
-    #             obj_product_blocked = Product.objects.select_for_update().get(id=obj_buy_blocked.product.id)
+    #             obj_purchase_blocked = Purchase.objects.select_for_update().get(id=return_confirmation_obj.purchase.id)
+    #             obj_product_blocked = Product.objects.select_for_update().get(id=obj_purchase_blocked.product.id)
     #
     #             user_blocked = SiteUser.objects.select_for_update().get(id=request.user.id)
     #
-    #             user_blocked.money += obj_buy_blocked.summ
+    #             user_blocked.money += obj_purchase_blocked.summ
     #             user_blocked.save()
-    #             obj_product_blocked.quantity += obj_buy_blocked.quantity
+    #             obj_product_blocked.quantity += obj_purchase_blocked.quantity
     #             obj_product_blocked.save()
     #
     #             return_confirmation_obj.delete()
@@ -133,15 +135,16 @@ class IndexProductView(ListView):
     # login_url = 'login/'
     # queryset = Product.objects.filter(quantity__gt=0)
     # allow_empty = True  # разрешить ли отображение пустого списка
-    # ordering = None  # явно указать ордеринг
+    ordering = 'title'  # явно указать ордеринг
     
     def get_queryset(self):
         queryset = super().get_queryset()
         query_search = self.request.GET.get('query_search')
+        queryset = queryset.filter(quantity__gt=0)
         if query_search:
-            queryset = queryset.filter(Q(quantity__gt=0) & Q(title__icontains=query_search)).order_by('title')
-        else:
-            queryset = queryset.filter(quantity__gt=0).order_by('title')
+            # queryset = queryset.filter(Q(quantity__gt=0) & Q(title__icontains=query_search)).order_by('title')
+            queryset = queryset.filter(quantity__gt=0, title__icontains=query_search)
+        
         return queryset
     
     def get_context_data(self, **kwargs):
@@ -182,9 +185,9 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     login_url = 'login/'
     template_name = 'product_detail.html'
-    extra_context = {'byform': BuyForm(), }
+    extra_context = {'byform': PurchaseForm(), }
     
-    # success_url = reverse_lazy('buylist')
+    # success_url = reverse_lazy('purchaselist')
     # fields = ['title', 'content','img_url', 'price', 'quantity',]
     
     # def post(self, request, *args, **kwargs):
@@ -216,9 +219,9 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
     #
     #         if error:
     #             return redirect('')
-    #         buy_obj = Buy(product=obj_product_blocked, site_user=user_blocked, quantity=quantity,
+    #         purchase_obj = Purchase(product=obj_product_blocked, site_user=user_blocked, quantity=quantity,
     #                       summ=summ)
-    #         buy_obj.save()
+    #         purchase_obj.save()
     #
     #         user_blocked.money -= summ
     #         user_blocked.save()
@@ -228,24 +231,24 @@ class ProductDetailView(LoginRequiredMixin, DetailView):
     #
     #         # messages.success(self.request, "Количество должно быть больше нуля!")
     #         messages.success(self.request, "Baying SUCSESS!")
-    #         return redirect('buylist')
+    #         return redirect('purchaselist')
     #
     #     return redirect('/')
     
-    # return reverse_lazy('buylist')
+    # return reverse_lazy('purchaselist')
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
-    #     context['byform'] = BuyForm(initial={'product': self.object.id})
+    #     context['byform'] = PurchaseForm(initial={'product': self.object.id})
     #     # context['model2_objects'] = MyModel2.objects.all()
     #     return context
 
 
-class BuyProductView(LoginRequiredMixin, CreateView):
-    model = Buy
+class PurchaseProductView(LoginRequiredMixin, CreateView):
+    model = Purchase
     login_url = 'login/'
     # fields = ['quantity', 'product', ]
-    success_url = reverse_lazy('buylist')
-    form_class = BuyForm
+    success_url = reverse_lazy('purchaselist')
+    form_class = PurchaseForm
     
     # def get_form_kwargs(self):
     #     # является методом, который возвращает словарь с аргументами для инициализации формы. Этот метод позволяет передать
@@ -258,9 +261,9 @@ class BuyProductView(LoginRequiredMixin, CreateView):
     #         'request': self.request
     #     })
     def form_valid(self, form):
-        buy_obj = form.save(commit=False)
-        # buy.summ = buy.price * buy.quantity
-        # buy.save()
+        purchase_obj = form.save(commit=False)
+        # purchase.summ = purchase.price * purchase.quantity
+        # purchase.save()
         # messages.success(self.request, "Продукт был успешно добавлен в вашу корзину.")
         
         # если брать из параметров URL  то
@@ -269,7 +272,7 @@ class BuyProductView(LoginRequiredMixin, CreateView):
         # id_product = int(form.data.get('id'))
         # Вар2
         
-        quantity = buy_obj.quantity
+        quantity = purchase_obj.quantity
         #
         with transaction.atomic():
             try:
@@ -305,11 +308,11 @@ class BuyProductView(LoginRequiredMixin, CreateView):
             if error:
                 return redirect('index')
             
-            # buy_obj.quantity = quantity
-            buy_obj.product = obj_product_blocked
-            buy_obj.site_user = user_blocked
-            buy_obj.summ = summ
-            buy_obj.save()
+            # purchase_obj.quantity = quantity
+            purchase_obj.product = obj_product_blocked
+            purchase_obj.site_user = user_blocked
+            purchase_obj.summ = summ
+            purchase_obj.save()
             #
             user_blocked.money -= summ
             user_blocked.save()
@@ -317,7 +320,7 @@ class BuyProductView(LoginRequiredMixin, CreateView):
             obj_product_blocked.quantity -= quantity
             obj_product_blocked.save()
             messages.success(self.request, "Baying SUCSESS!")
-            return redirect('buylist')
+            return redirect('purchaselist')
         
         return super().form_valid(form)
     
@@ -339,21 +342,23 @@ class ReturnConfirmationView(LoginRequiredMixin, CreateView):
         # create ReturnConfirmation
         
         with transaction.atomic():
-            buy_id = self.request.POST.get('buy_id')
-            return_confirmation_is = ReturnConfirmation.objects.filter(buy=buy_id)
+            purchase_id = self.request.POST.get('purchase_id')
+            return_confirmation_is = ReturnConfirmation.objects.filter(purchase=purchase_id)
             if return_confirmation_is.exists():
                 messages.error(self.request, "ReturnConfirmation already exist!")
                 return redirect('returnconfirmationlist')
-            return_confirmation_obj.buy = Buy.objects.get(id=buy_id)
-            if timezone.now() > (
-                    return_confirmation_obj.buy.created_at + timezone.timedelta(minutes=TIME_RETURN_LIMIT)):
-                messages.error(self.request, "Return not allowed error, 3 minutes have passed!")
-                return redirect('buylist')
+            return_confirmation_obj.purchase = Purchase.objects.get(id=purchase_id)
+            # timezone.now() время сервера UTC отстает от моего на 3 часа
+            # if timezone.now() > (
+            if datetime.now() > (
+                    return_confirmation_obj.purchase.created_at + datetime.timedelta(minutes=TIME_RETURN_LIMIT)):
+                messages.error(self.request, f"Return not allowed error, 3 minutes have passed! {datetime.now()}")
+                return redirect('purchaselist')
             return_confirmation_obj.site_user = SiteUser.objects.get(id=self.request.user.id)
             return_confirmation_obj.save()
             messages.success(self.request, "ReturnConfirmation saved SUCSESS!")
         return super().form_valid(form=form)
-        # return redirect('buylist')
+        # return redirect('purchaselist')
     # def form_invalid(self, form):
     #     return redirect('returnconfirmationlist')
 
@@ -384,14 +389,14 @@ class ReturnConfirmationAcceptView(LoginRequiredMixin, AdminPassedMixin, DeleteV
     def form_valid(self, form):
         if self.object:
             with transaction.atomic():
-                obj_buy_blocked = Buy.objects.select_for_update().get(id=self.object.buy.id)
-                obj_product_blocked = Product.objects.select_for_update().get(id=obj_buy_blocked.product.id)
+                obj_purchase_blocked = Purchase.objects.select_for_update().get(id=self.object.purchase.id)
+                obj_product_blocked = Product.objects.select_for_update().get(id=obj_purchase_blocked.product.id)
                 user_blocked = SiteUser.objects.select_for_update().get(id=self.request.user.id)
-                user_blocked.money += obj_buy_blocked.summ
-                obj_product_blocked.quantity += obj_buy_blocked.quantity
+                user_blocked.money += obj_purchase_blocked.summ
+                obj_product_blocked.quantity += obj_purchase_blocked.quantity
                 user_blocked.save()
                 obj_product_blocked.save()
-                obj_buy_blocked.delete()
+                obj_purchase_blocked.delete()
                 # self.object.delete()
         
         messages.success(self.request, "ReturnConfirmation Accepted success!")

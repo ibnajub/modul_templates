@@ -24,7 +24,7 @@
 
 
             {#    <form method="post" action="{% url 'product_detail' slug=object.slug %}" class="mt-4">#}
-            <form method="post" action="{% url 'buy_product' %}" class="mt-4">
+            <form method="post" action="{% url 'purchase_product' %}" class="mt-4">
                 <input type="hidden" name="id" value="{{ product.id }}">
                 <div class="form-group">
                     {#                    <input type="text" hidden name="url_slug" value="{{ obj.slug }}">#}

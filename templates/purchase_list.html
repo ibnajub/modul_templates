@@ -28,7 +28,7 @@
                 <td>
                     <form action="{% url 'returnconfirmation_create' %}" method="post">
                         {% csrf_token %}
-                        <input type="number" hidden name="buy_id" value="{{ obj.id }}">
+                        <input type="number" hidden name="purchase_id" value="{{ obj.id }}">
                         <button type="submit">Return</button>
                     </form>
                 </td>
@@ -50,7 +50,7 @@
     {##}
     {#        <form action="" method="post">#}
     {#            {% csrf_token %}#}
-    {#            <input type="number" hidden name="buy_id" value="{{ obj.id }}">#}
+    {#            <input type="number" hidden name="purchase_id" value="{{ obj.id }}">#}
     {#            <button type="submit">Return</button>#}
     {#        </form>#}
     {#    {% endfor %}#}

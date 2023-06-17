@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 
-from myapp.models import Product, Buy, ReturnConfirmation, SiteUser
+from myapp.models import Product, Purchase, ReturnConfirmation, SiteUser
 # from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext as _
 from django.conf import settings
@@ -27,9 +27,9 @@ class ProductForm(forms.ModelForm):
         return quantity
 
 
-class BuyForm(forms.ModelForm):
+class PurchaseForm(forms.ModelForm):
     class Meta:
-        model = Buy
+        model = Purchase
         fields = ['quantity', ]
     
     def clean_quantity(self):
@@ -63,7 +63,7 @@ class BuyForm(forms.ModelForm):
 # class ReturnConfirmationForm(forms.ModelForm):
 #     class Meta:
 #         model = ReturnConfirmation
-#         fields = ['buy']
+#         fields = ['purchase']
 #
 #     def clean(self):
 #         return super().clean()

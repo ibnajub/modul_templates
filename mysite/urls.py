@@ -18,9 +18,9 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path
 
-from myapp.views import IndexProductView, Login, LogOut, UserRegisterView, BuyListView, ReturnConfirmationListView, \
+from myapp.views import IndexProductView, Login, LogOut, UserRegisterView, PurchaseListView, ReturnConfirmationListView, \
     AddProductView, \
-    ProductUpdateView, ProductDetailView, BuyProductView, ReturnConfirmationView, ReturnConfirmationCancelView, \
+    ProductUpdateView, ProductDetailView, PurchaseProductView, ReturnConfirmationView, ReturnConfirmationCancelView, \
     ReturnConfirmationAcceptView
 
 from django.conf.urls.static import static
@@ -31,8 +31,8 @@ urlpatterns = [
     path('addproduct/', AddProductView.as_view(), name='addproduct'),
     path('update_product/<slug:slug>/', ProductUpdateView.as_view(), name='update_product'),
     path('product_detail/<slug:slug>/', ProductDetailView.as_view(), name='product_detail'),
-    path('buy_product/', BuyProductView.as_view(), name='buy_product'),
-    path('buylist/', BuyListView.as_view(), name='buylist'),
+    path('purchase_product/', PurchaseProductView.as_view(), name='purchase_product'),
+    path('purchaselist/', PurchaseListView.as_view(), name='purchaselist'),
     path('returnconfirmationlist', ReturnConfirmationListView.as_view(), name='returnconfirmationlist'),
     path('returnconfirmation_create', ReturnConfirmationView.as_view(), name='returnconfirmation_create'),
     path('return_confirmation_cancel/<int:pk>', ReturnConfirmationCancelView.as_view(),
